@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment - Malika Couture{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Payment Processing</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-coins fa-4x text-primary mb-3"></i>
+                        <h4>Stellar Payment</h4>
+                        <p class="text-muted">Secure blockchain payment processing</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6>Order Summary</h6>
+                        <p><strong>Order #{{ order.id }}</strong></p>
+                        <p class="h4 text-primary">${{ order.total_amount }}</p>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-lock me-2"></i>Process Payment
+                        </button>
+                    </form>
+                    
+                    <div class="mt-4">
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Your payment is secured by Stellar blockchain technology
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ product.name }} - Malika Couture{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'products:product_list' %}">Products</a></li>
+            <li class="breadcrumb-item"><a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row">
+        <div class="col-lg-6">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+            {% else %}
+                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 500px;">
+                    <i class="fas fa-image fa-5x text-muted"></i>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-lg-6">
+            <h1 class="mb-3">{{ product.name }}</h1>
+            <p class="text-muted mb-3">Category: <a href="{{ product.category.get_absolute_url }}" class="text-decoration-none">{{ product.category.name }}</a></p>
+            <h3 class="text-primary mb-4">${{ product.price }}</h3>
+            
+            <div class="mb-4">
+                <h6>Description</h6>
+                <p>{{ product.description }}</p>
+            </div>
+            
+            <div class="mb-4">
+                <h6>Size</h6>
+                <span class="badge bg-secondary fs-6">{{ product.sizes }}</span>
+            </div>
+            
+            <div class="mb-4">
+                <h6>Stock</h6>
+                {% if product.is_in_stock %}
+                    <span class="badge bg-success">In Stock ({{ product.stock }} available)</span>
+                {% else %}
+                    <span class="badge bg-danger">Out of Stock</span>
+                {% endif %}
+            </div>
+            
+            {% if product.is_in_stock %}
+                <form action="{% url 'cart:cart_add' product.id %}" method="post" class="mb-4">
+                    {% csrf_token %}
+                    <div class="row align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label">Quantity</label>
+                            <select name="quantity" class="form-select">
+                                {% for i in "123456789"|make_list %}
+                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            {% endif %}
+            
+            <div class="border-top pt-4">
+                <h6>Product Features</h6>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success me-2"></i>Premium quality materials</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Expert craftsmanship</li>
+                    <li><i class="fas fa-check text-success me-2"></i>30-day return policy</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Free shipping on orders over $100</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related Products -->
+    {% if related_products %}
+    <div class="mt-5">
+        <h3 class="mb-4">Related Products</h3>
+        <div class="row g-4">
+            {% for related_product in related_products %}
+            <div class="col-lg-3 col-md-6">
+                <div class="card product-card h-100">
+                    {% if related_product.image %}
+                        <img src="{{ related_product.image.url }}" class="card-img-top" alt="{{ related_product.name }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-image fa-2x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h6 class="card-title">{{ related_product.name }}</h6>
+                        <p class="card-text text-primary fw-bold">${{ related_product.price }}</p>
+                        <a href="{{ related_product.get_absolute_url }}" class="btn btn-outline-primary btn-sm">View</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
